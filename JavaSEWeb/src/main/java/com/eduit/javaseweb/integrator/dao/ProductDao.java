@@ -17,7 +17,7 @@ public class ProductDao {
     public static final String GET = "SELECT id, precio, descripcion FROM productos ";
 
     public void insert(Product product) throws SQLException, IllegalArgumentException {
-        if (getByDescription(product) != null) {
+        if (getByDescription(product.getDescription()) != null) {
             throw new IllegalArgumentException("The product is already exists in the database.");
         }
 
@@ -76,22 +76,24 @@ public class ProductDao {
         return find;
     }
 
-    public Product getByDescription(Product product) throws SQLException {
-        Product find = null;
-        try (Connection conn = Dao.getConnection();
-                PreparedStatement ps = conn.prepareStatement(GET.concat("WHERE descripcion =?;"))) {
-            ps.setString(1, product.getDescription());
+    public List<Product> getByDescription(String description) throws SQLException {
+        Product find;
+        List<Product> products = new ArrayList<>();
+        try (Connection conn = Dao.getConnection(); // where descripcion like '%test%'
+                PreparedStatement ps = conn.prepareStatement(GET.concat("WHERE descripcion like ?;"))) {
+            ps.setString(1, "%" + description + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     find = new Product();
                     find.setId(rs.getInt("id"));
                     find.setPrice(rs.getDouble("precio"));
                     find.setDescription(rs.getString("descripcion"));
+                    products.add(find);
                 }
             }
         }
 
-        return find;
+        return products;
     }
 
     public List<Product> getAll() throws SQLException {

@@ -8,7 +8,7 @@
     <body>
         <h1>Java Standard Edition Web Programmingg</h1>
         <ul>
-            <li><a href="integrator/products.jsp?action=getall">Products</a></li>
+            <li><a href="products?action=getall">Products</a></li>
             <li><a href="laboratory01/index.html">Laboratory 01</a></li>
         </ul>
     </body>

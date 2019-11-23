@@ -1,0 +1,11 @@
+.firstColumn{
+    text-align: right;
+}
+.hidden{
+    display: none;
+}
+.notHidden p, .notHidden{
+    display: inline;
+    background-color: red;
+    color: white;
+}

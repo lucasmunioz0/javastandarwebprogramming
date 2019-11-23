@@ -5,19 +5,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Product</title>
-        <style>
-            .firstColumn{
-                text-align: right;
-            }
-            .hidden{
-                display: none;
-            }
-            .notHidden p, .notHidden{
-                display: inline;
-                background-color: red;
-                color: white;
-            }
-        </style>
+        <link rel="stylesheet" href="../css/styles.css">
     </head>
     <body>
         <h1>New Product!</h1>
