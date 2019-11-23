@@ -1,0 +1,12 @@
+Crear 2 páginas web: una para ingresar un producto y otra para buscarlo. Ambas
+páginas deben trabajar con los productos que se encuentran en la base de datos.
+Para esto debe seguir con el ejercicio integrador de la clase 9.
+BONUS:
+1) Haga una pagina para editar
+2) Haga una pàgina para eliminar
+3) Agregar lògica en la pàgina de bùsqueda: si no se
+llena una descripción que muestre todos los
+productos.
+SUPER BONUS
+En la pàgina de búsqueda agregue 2 links en los resultados
+de las búsquedas: uno para borrar y otro para editar.

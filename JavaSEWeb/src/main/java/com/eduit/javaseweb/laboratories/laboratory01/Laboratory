@@ -1,0 +1,11 @@
+Construir una página llamada index.html con un formulario que contenga el siguiente
+contenido:
+Nombre
+Apellido
+Domicilio
+Pais
+El formulario deberá estar configurado con el método POST. Al presionar el botón
+“Registrarme!” los datos cargados en el formulario deberán ser enviados a un servlet
+denominado PersonaServlet, que debe estar ubicado en el paquete
+ar.com.educacionit.webprogramming.servlets.
+El servlet deberá informar obtener los datos en HTML.
