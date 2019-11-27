@@ -1,12 +1,11 @@
 package com.eduit.javaseweb.integrator.controllers;
 
 import com.eduit.javaseweb.integrator.dao.ProductDao;
+import com.eduit.javaseweb.integrator.exceptions.BusinessException;
 import com.eduit.javaseweb.integrator.models.Product;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +19,7 @@ public class ProductController extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=utf-8");
         switch (request.getParameter("action")) {
             case "Add":
             case "Update":
@@ -34,48 +34,49 @@ public class ProductController extends HttpServlet {
             case "Filter":
                 doFilter(request, response);
                 break;
+            case "New":
+                doNew(request, response);
+                break;
             default:
-                doGetAll(request, response);
+                doGetAll(request, response, "", false);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Product product = null;
         try {
-            int idProduct = request.getParameter("id") != null && request.getParameter("id").trim().length() > 0
+            final int idProduct = request.getParameter("id") != null && request.getParameter("id").trim().length() > 0
                     ? Integer.parseInt(request.getParameter("id")) : 0;
-            String description = request.getParameter("description");
-            String price = request.getParameter("price");
+            final String description = request.getParameter("description");
+            final String price = request.getParameter("price");
 
-            Product product = new Product(idProduct, Double.parseDouble(price), description);
-            String msg = insertOrUpdate(product);
-
-            List<Product> products = dao.getAll();
-            request.getSession().setAttribute("msg", msg.concat(" succesfully with Id: ") + product.getId());
-            request.getSession().setAttribute("products", products);
-            response.sendRedirect("integrator/products.jsp");
-        } catch (IllegalArgumentException | SQLException ex) {
-            request.getSession().setAttribute("msg", ex.getMessage());
-            response.sendRedirect("integrator/addProduct.jsp");
+            product = new Product(idProduct, Double.parseDouble(price), description);
+            final String msg = insertOrUpdate(product).concat(" succesfully with Id: ") + product.getId();
+            doGetAll(request, response, msg, false);
+        } catch (IOException | NumberFormatException | BusinessException | SQLException ex) {
+            if (request.getParameter("action").equals("Update")) {
+                request.getSession().setAttribute("product", product);
+                redirect(request, response, "integrator/editProduct.jsp", ex.toString(), true);
+            } else {
+                redirect(request, response, "integrator/addProduct.jsp", ex.toString(), true);
+            }
         }
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Product> products = null;
+        String msg = "";
         try {
-            products = dao.getAll();
-            Product product = new Product();
-            String id = request.getParameter("id");
-            product.setId(Integer.parseInt(id));
+            final int idProduct = request.getParameter("id") != null && request.getParameter("id").trim().length() > 0
+                    ? Integer.parseInt(request.getParameter("id")) : 0;
+            final Product product = new Product(idProduct);
             dao.delete(product);
-            products.remove(product);
-            request.getSession().setAttribute("msg", "Successfully deleted");
-        } catch (IllegalArgumentException | SQLException ex) {
-            request.getSession().setAttribute("msg", ex.getMessage());
+            msg = "Successfully deleted";
+        } catch (NumberFormatException | BusinessException | SQLException ex) {
+            msg = ex.toString();
         } finally {
-            request.getSession().setAttribute("products", products);
-            response.sendRedirect("integrator/products.jsp");
+            doGetAll(request, response, msg, !msg.equals("Successfully deleted"));
         }
     }
 
@@ -84,29 +85,28 @@ public class ProductController extends HttpServlet {
         try {
             int idProduct = request.getParameter("id") != null && request.getParameter("id").trim().length() > 0
                     ? Integer.parseInt(request.getParameter("id")) : 0;
-            Product product = new Product();
-            product.setId(idProduct);
-            product = dao.getById(product);
+            final Product product = dao.getById(new Product(idProduct));
             request.getSession().setAttribute("product", product);
-        } catch (IllegalArgumentException | SQLException ex) {
-            request.getSession().setAttribute("msg", ex.getMessage());
-        } finally {
-            response.sendRedirect("integrator/editProduct.jsp");
+            redirect(request, response, "integrator/editProduct.jsp", "", false);
+        } catch (IOException | NumberFormatException | BusinessException | SQLException ex) {
+            doGetAll(request, response, ex.toString(), true);
         }
     }
 
-    private void doGetAll(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void doGetAll(HttpServletRequest request, HttpServletResponse response, String msg, boolean isError) throws IOException {
         try {
-            List<Product> products = dao.getAll();
+            final List<Product> products = dao.getAll();
             request.getSession().setAttribute("products", products);
-        } catch (IllegalArgumentException | SQLException ex) {
-            request.getSession().setAttribute("msg", ex.getMessage());
-        } finally {
-            response.sendRedirect("integrator/products.jsp");
+            //redirect(request, response, "integrator/products.jsp", msg, isError);
+        } catch (SQLException ex) {
+            msg = ex.toString();
+            isError = true;
+        }finally{
+            redirect(request, response, "integrator/products.jsp", msg, isError);
         }
     }
 
-    private String insertOrUpdate(Product product) throws SQLException {
+    private String insertOrUpdate(Product product) throws SQLException, BusinessException {
         String action = "Insert";
         if (product.getId() > 0) {
             dao.update(product);
@@ -118,22 +118,35 @@ public class ProductController extends HttpServlet {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String id = request.getParameter("id");
-        String description = request.getParameter("description");
-        
-        
+        final String id = request.getParameter("id");
+        final String description = request.getParameter("description");
+        String msg = "";
         try {
-            Integer integer = id != null && !id.trim().equals("")? Integer.parseInt(id) : null;
+            final Integer integer = id != null && !id.trim().equals("") ? Integer.parseInt(id) : null;
             if (integer != null) {
                 doGet(request, response);
                 return;
-            }else{
-                List<Product> products = dao.getByDescription(description);
-                request.getSession().setAttribute("products", products);
             }
-        } catch (ServletException | IOException | SQLException | NumberFormatException ex) {
-            request.getSession().setAttribute("msg", ex.toString());
+            final List<Product> products = dao.getProductsByDescription(description);
+            request.getSession().setAttribute("products", products);
+        } catch (Exception ex) {
+            msg = ex.toString();
         }
-        response.sendRedirect("integrator/products.jsp");
+        redirect(request, response, "integrator/products.jsp", msg, !msg.isEmpty());
+    }
+
+    private void redirect(HttpServletRequest request, HttpServletResponse response, String resource, String msg, boolean isError) throws IOException {
+        if (isError) {
+            request.getSession().setAttribute("error", msg);
+            request.getSession().setAttribute("msg", null);
+        } else {
+            request.getSession().setAttribute("error", null);
+            request.getSession().setAttribute("msg", msg);
+        }
+        response.sendRedirect(resource);
+    }
+
+    private void doNew(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        redirect(request, response, "integrator/addProduct.jsp", "", false);
     }
 }

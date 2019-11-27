@@ -1,11 +1,60 @@
 .firstColumn{
     text-align: right;
 }
-.hidden{
-    display: none;
+
+.error{
+    background-color: red;
+    color: white;
+    padding: 5px;
+    margin: 5px 5px 10px 5px;
 }
-.notHidden p, .notHidden{
-    display: inline;
+
+.sucess{
+    background-color: green;
+    color: white;
+    padding: 5px;
+    margin: 5px 5px 10px 5px;
+}
+
+.tblProducts th{
+    background-color: #CFE2F3;
+    color: black;
+}
+
+h1{
+    margin: 10px;
+    color: #005D4F;
+}
+
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+.wrapper {
+    height: auto !important;
+    margin: 10px;
+}
+
+.message{
+    padding: 10px;
     background-color: red;
     color: white;
 }
+
+.tblAbm tr, .tblAbm th, .tblAbm td{
+    border: 1px solid black;
+    width: 100%;
+    text-align: center;
+}
+
+.tblAbm th{
+    background-color: #005D4F;
+    color:white;
+}
+
+button{
+    margin-bottom: 10px;
+}
+

@@ -1,12 +1,13 @@
-com\eduit\javaseweb\integrator\models\Product.class
 com\eduit\javaseweb\utils\StringUtils.class
 com\eduit\javaseweb\integrator\dao\ProductDao.class
-com\eduit\javaseweb\integrator\models\Customer.class
 com\eduit\javaseweb\utils\ConnectionManager.class
-com\eduit\javaseweb\integrator\controllers\ProductController.class
-com\eduit\javaseweb\laboratories\laboratory01\Laboratory01b.class
 com\eduit\javaseweb\laboratories\laboratory01\Laboratory01.class
 com\eduit\javaseweb\integrator\dao\Dao.class
+com\eduit\javaseweb\integrator\exceptions\BusinessException.class
 com\eduit\javaseweb\integrator\models\Phone.class
 com\eduit\javaseweb\integrator\models\Residence.class
 com\eduit\javaseweb\integrator\models\Person.class
+com\eduit\javaseweb\integrator\models\Product.class
+com\eduit\javaseweb\integrator\models\Customer.class
+com\eduit\javaseweb\integrator\controllers\ProductController.class
+com\eduit\javaseweb\laboratories\laboratory01\Laboratory01b.class

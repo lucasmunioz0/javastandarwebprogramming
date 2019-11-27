@@ -1,64 +1,59 @@
 <%@page import="com.eduit.javaseweb.integrator.models.Product"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"-->
         <title>Product</title>
-        <style>
-            .firstColumn{
-                text-align: right;
-            }
-            .hidden{
-                display: none;
-            }
-            .notHidden p, .notHidden{
-                display: inline;
-                background-color: red;
-                color: white;
-            }
-        </style>
+        <link rel="stylesheet" href="../css/styles.css">
     </head>
     <body>
-        <h1>Update Product!</h1>
-        <% Product product = (Product) request.getSession().getAttribute("product");%>
-        <% String msg = String.valueOf(request.getSession().getAttribute("msg"));%>
-        <% String divClass = "hidden";%>
-        <% if (msg == null || msg.equals("null")) {
-                msg = "";
-                divClass = "hidden";
-            } else {
-                divClass = "notHidden";
-            }
+        <% Product product = (Product) request.getSession().getAttribute("product");
+            String msg = String.valueOf(request.getSession().getAttribute("msg"));
+            String error = String.valueOf(request.getSession().getAttribute("error"));
         %>
-        <div class="<%=divClass%>">
-            <p><%=msg%></p>
-            <p id="demo"></p>
-        </div>
-        <form method="post" action="../products">
-            <table>
-                <tr>
-                    <td class="firstColumn">Id Product:</td>
-                    <td><input style="background-color: grey; color: white" id="id" type="number" name="id" value="<%=product.getId()%>" readonly/></td>
-                </tr>
-                <tr>
-                    <td class="firstColumn">Description:</td>
-                    <td><input id="description" type="text" name="description" value="<%=product.getDescription()%>"/></td>
-                </tr>
-                <tr>
-                    <td class="firstColumn">Price: $</td>
-                    <td><input id="price" type="text" name="price" value="<%=product.getPrice()%>"/></td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="submit" name="action" value="Update"/>
-                        <input type="reset"  name="action" value="Reset"/>
-                    </td>
-                </tr>
+        <header>
+            <%@include file="../topBanner.jsp" %>
+        </header>
+        <div>
+            <table style="width: 100%">
+                <th style="text-align: left">
+                    <h1>Products</h1>
+                </th>
+                <th style="text-align: right; padding-right: 10px">
+                    Back<a href="../products?action=GetAll"><img src="../resources/images/volver.png" width="25" height="25" alt="Volver"/></a>
+                </th>
             </table>
-        </form>
-        <br/>
-        <hr/>
-        <a href="products.jsp">Back</a>
+        </div>
+        <fieldset class="wrapper">
+            <legend>Edit Product</legend>
+            <%if (error != null && !error.equals("null") && !error.isEmpty()) {
+                    out.print("<div class=\"error\"><p>" + error + "</p></div>");
+                } else if (msg != null && !msg.equals("null") && !msg.isEmpty()) {
+                    out.print("<div class=\"sucess\"><p>" + msg + "</p></div>");
+                }%>
+            <form method="post" action="../products">
+                <table>
+                    <tr>
+                        <td class="firstColumn">Id Product:</td>
+                        <td><input style="background-color: grey; color: white" id="id" type="number" name="id" value="<%=product.getId()%>" readonly/></td>
+                    </tr>
+                    <tr>
+                        <td class="firstColumn">Description:</td>
+                        <td><input id="description" type="text" name="description" value="<%=product.getDescription()%>"/></td>
+                    </tr>
+                    <tr>
+                        <td class="firstColumn">Price: $</td>
+                        <td><input id="price" type="text" name="price" value="<%=product.getPrice()%>"/></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="submit" name="action" value="Update"/>
+                            <input type="submit"  name="action" value="Delete"/>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </fieldset>
     </body>
 </html>
