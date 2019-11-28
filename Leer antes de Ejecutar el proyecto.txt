@@ -1,0 +1,17 @@
+Para el correcto funcionamiento del proyecto, se debe respetar la estructura de la tabla. 
+------
+Para modificar la conexión deben editar los valores de la clase DAO dentro del paquete
+
+	com.eduit.javaseweb.integrator.dao
+En caso de necesitar ayuda para ejecutar el proyecto o entender el código, podes enviarme un mail a: lucasmunioz0@gmail.com
+
+<---- Copiar el siguiente script y pegarlo en un editor MySQL. ---->
+CREATE SCHEMA javaseweb;
+USE javaseweb;
+
+CREATE TABLE productos (
+	id int auto_increment not null,
+    precio decimal not null,
+    descripcion varchar(255) not null,
+    constraint pk_productos primary key (id)
+);
